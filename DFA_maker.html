@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFA2DFA | DHZ</title>
+    <!-- Bootstrap -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style rel="stylesheet" href="./assets/css/NFAtoDFA.css"></style>
+</head>
+<style>
+    @font-face {
+    font-family: iranYekanRegular;
+    src: url("./assets/fonts/IRANYekan/fonts/woff/IRANYekanWebRegular.woff");
+    }
+    @font-face {
+    font-family: iranYekanBold;
+    src: url("./assets/fonts/IRANYekan/fonts/woff/IRANYekanWebBold.woff");
+    }
+    @font-face {
+    font-family: iranYekanBlack;
+    src: url("./assets/fonts/IRANYekan/fonts/woff/IRANYekanWebBlack.woff");
+    }
+
+    body{
+    direction: rtl;
+    text-align: right;
+    font-family: iranYekanRegular !important;
+    }
+    h1,h2,h3,h4,h5,h6{
+        font-family: iranYekanRegular !important;
+    }
+</style>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="direction: rtl;">
+        <a class="navbar-brand" style="font-family: iranYekanBold;">تمرین تحویلی نظریه</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse mr-5" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-link" href="NFA2DFA.html">تبدیل NFA به DFA <span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="NFA_maker.html">NFA</a>
+            <a class="nav-link active" href="DFA_maker.html">DFA</a>
+            <a class="nav-link" href="DFA_optimization.html">بهینه سازی DFA</a>
+          </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1>سازنده DFA</h1>
+        <p class="instructions">
+            در ابتدا موقعیت ورودی و موقعیت پذیرش ماشین را مشخص کنید و سپس اطلاعات DFA
+             خود را وارد کنید
+        </p>
+        <ul class="instructions-list">
+            <li>
+            [ &lambda; ] - خالی بودن ورودی به معنای لاندا یا اپسیلون است
+            </li>
+            <!-- <li>
+            The finite set of states ( <i>Q</i> ) and the alphabet ( &Sigma; )
+            will be generated automatically based on the transitions entered.
+            </li> -->
+        </ul>
+        <div class="main-part mt-4">
+            <button
+              type="button"
+              class="btn btn-outline-danger"
+              id="resetBtn"
+              title="Reset the current NFA"
+            >
+              بازنشانی
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-success"
+              id="exampleBtn"
+              title="Fill in an example NFA"
+            >
+              مثال پیش فرض
+            </button>
+            <form class="form-horizontal align-center mt-4" id="nfa" role="form">
+              <form class="form-horizontal">
+                <div class="form-group form-inline">
+                  <label for="initialStateInput">نقطه ورود:&nbsp;&nbsp;</label>
+                  <input type="text" class="form-control" id="initialStateInput" />
+                </div>
+    
+                <div class="form-group form-inline">
+                  <label for="finalStatesInput">حالت پذیرش:&nbsp;&nbsp;</label>
+                  <input type="text" class="form-control" id="finalStatesInput" />
+                </div>
+              </form>
+              <div class="form-inline" id="nfa-transitions">
+                <div class="production-row mt-2">
+                  &delta;(&nbsp;<input
+                    type="text"
+                    class="form-control current-state-input"
+                  />&nbsp;,&nbsp;<input
+                    type="text"
+                    class="form-control input-symbol"
+                    placeholder="&lambda;"
+                  />&nbsp;)&nbsp;=&nbsp;<input
+                    type="text"
+                    class="form-control next-states"
+                  />
+                  <span
+                    class="glyphicon glyphicon-remove-circle remove-button"
+                    title="Remove this transition"
+                  ><i class="fa fa-remove p-2"></i></span>
+                </div>
+              </div>
+              <div class="clearfix"></div>
+            </form>
+            <div class="clearfix"></div>
+            <br />
+    
+            <div class="col-xs-6 new-production">
+              <button
+                id="new-transition"
+                type="button"
+                class="btn btn-dark"
+                title="Create a new transition"
+              >
+                <span class="glyphicon glyphicon-plus"></span> 
+                افزودن حالت
+              </button>
+            </div>
+        </div>
+
+        <hr class="my-4">
+        <div class="clearfix mt-4"></div>
+        <h2 id="verify-update-debug">نتیجه</h2>
+
+        <div class="resultContainer p-4">
+            <div hidden>
+              <h5>NFA شما :</h5>
+              <span id="current-nfa-status"></span>
+              <div id="current-nfa"></div>
+            </div>
+
+            <div class="clearfix mt-4"></div>
+            <h5>DFA معادل :</h5>
+            <div class="row">
+                <div class="col-lg">
+                <span id="current-dfa-status"></span>
+                <div id="current-dfa"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Font Awesome -->
+    <script
+      src="https://kit.fontawesome.com/17ac6b8a5c.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+      integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script
+      src="https://unpkg.com/viz.js@1.8.1/viz.js"
+      type="javascript/worker"
+    ></script>
+    <script src="https://unpkg.com/d3-graphviz@2.6.1/build/d3-graphviz.js"></script>
+
+    <!-- NFAtoDFA engine -->
+    <script src="./assets/js/NFAtoDFA-ENGINE.js"></script>
+
+    <!-- NFAtoDFA DOM -->
+    <script src="./assets/js/NFAtoDFA-DOM.js"></script>
+</body>
+</html>
